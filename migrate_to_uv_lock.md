@@ -3,13 +3,13 @@
 ## Execute in Dev Container:
 
 ```bash
-# 1. Generate uv.lock file
+# Generate uv.lock file
 uv lock
 
-# 2. Test dependency check script
+# Test dependency check script
 python scripts/check_lockfile.py
 
-# 3. Test new workflow
+# Test new workflow
 uv sync
 uv run pytest tests/ -v
 ```
