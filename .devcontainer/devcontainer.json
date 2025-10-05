@@ -8,6 +8,7 @@
     "vscode": {
       "settings": {
         "python.defaultInterpreterPath": "/workspaces/${localWorkspaceFolderBasename}/.venv/bin/python",
+        "python.terminal.activateEnvironment": true,
         "python.testing.pytestEnabled": true,
         "python.testing.pytestArgs": [
           "tests"
@@ -29,7 +30,7 @@
       ]
     }
   },
-  // "postCreateCommand": "uv venv && uv pip sync requirements.txt",
+  "postCreateCommand": "uv venv && uv pip sync requirements-dev.txt && uv pip install -e . && chmod +x .devcontainer/setup.sh && .devcontainer/setup.sh",
   "forwardPorts": [],
   "remoteUser": "vscode"
 }
