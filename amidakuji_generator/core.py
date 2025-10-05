@@ -69,27 +69,23 @@ def generate_amidakuji_data(
             break
 
         # Check if adjacent positions are not already selected
-        if (y, col) not in selected_positions and \
-           (y, col - 1) not in selected_positions and \
-           (y, col + 1) not in selected_positions:
+        if (
+            (y, col) not in selected_positions
+            and (y, col - 1) not in selected_positions
+            and (y, col + 1) not in selected_positions
+        ):
             # If no conflict, add horizontal bar
-            horizontal_bars.append({
-                "y_level": y,
-                "left_line_index": col
-            })
+            horizontal_bars.append({"y_level": y, "left_line_index": col})
             selected_positions.add((y, col))
 
     return {
         "vertical_lines": vertical_lines,
         "horizontal_bars_total": len(horizontal_bars),
-        "horizontal_bars": horizontal_bars
+        "horizontal_bars": horizontal_bars,
     }
 
 
-def render_to_pdf(
-    amidakuji_data: Dict[str, Any],
-    output_path: str
-) -> None:
+def render_to_pdf(amidakuji_data: Dict[str, Any], output_path: str) -> None:
     """
     Render Amidakuji data structure to PDF file using ReportLab.
 
@@ -100,6 +96,7 @@ def render_to_pdf(
     """
     # Create output directory if it doesn't exist
     from pathlib import Path
+
     Path(output_path).parent.mkdir(parents=True, exist_ok=True)
     # Initialize PDF document
     c = canvas.Canvas(output_path, pagesize=A4)
@@ -153,7 +150,7 @@ def render_to_pdf(
     for i in range(n):
         x = margin + i * line_spacing
         y = margin + level_spacing / 2
-        result_char = chr(ord('A') + result_mapping[i])
+        result_char = chr(ord("A") + result_mapping[i])
         text_width = c.stringWidth(result_char)
         c.drawString(x - text_width / 2, y, result_char)
 
@@ -200,7 +197,9 @@ def _simulate_amidakuji(amidakuji_data: Dict[str, Any]) -> List[int]:
         left_index = bar["left_line_index"]
         # Swap positions at left_index and left_index+1
         if left_index < len(positions) - 1:
-            positions[left_index], positions[left_index + 1] = \
-                positions[left_index + 1], positions[left_index]
+            positions[left_index], positions[left_index + 1] = (
+                positions[left_index + 1],
+                positions[left_index],
+            )
 
     return positions

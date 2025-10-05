@@ -24,7 +24,8 @@
       "extensions": [
         "ms-python.python",
         "ms-python.vscode-pylance",
-        "charliermarsh.ruff"
+        "charliermarsh.ruff",
+        "editorconfig.editorconfig"
       ]
     }
   },

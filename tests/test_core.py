@@ -16,9 +16,7 @@ class TestGenerateAmidakujiData:
     def test_basic_generation(self) -> None:
         """Test basic Amidakuji generation"""
         result = generate_amidakuji_data(
-            vertical_lines=5,
-            min_horizontal_bars=3,
-            max_horizontal_bars=10
+            vertical_lines=5, min_horizontal_bars=3, max_horizontal_bars=10
         )
 
         # Verify that expected keys exist
@@ -34,9 +32,7 @@ class TestGenerateAmidakujiData:
     def test_horizontal_bars_structure(self) -> None:
         """Test horizontal bars data structure"""
         result = generate_amidakuji_data(
-            vertical_lines=4,
-            min_horizontal_bars=2,
-            max_horizontal_bars=5
+            vertical_lines=4, min_horizontal_bars=2, max_horizontal_bars=5
         )
 
         # Verify that each horizontal bar has correct structure
@@ -53,9 +49,7 @@ class TestGenerateAmidakujiData:
             ValueError, match="Number of vertical lines must be 2 or greater"
         ):
             generate_amidakuji_data(
-                vertical_lines=1,
-                min_horizontal_bars=0,
-                max_horizontal_bars=5
+                vertical_lines=1, min_horizontal_bars=0, max_horizontal_bars=5
             )
 
     def test_invalid_horizontal_bars_range(self) -> None:
@@ -64,9 +58,7 @@ class TestGenerateAmidakujiData:
             ValueError, match="Minimum must be less than or equal to maximum"
         ):
             generate_amidakuji_data(
-                vertical_lines=5,
-                min_horizontal_bars=10,
-                max_horizontal_bars=5
+                vertical_lines=5, min_horizontal_bars=10, max_horizontal_bars=5
             )
 
     def test_negative_horizontal_bars(self) -> None:
@@ -76,17 +68,13 @@ class TestGenerateAmidakujiData:
             match="Minimum number of horizontal bars must be 0 or greater",
         ):
             generate_amidakuji_data(
-                vertical_lines=5,
-                min_horizontal_bars=-1,
-                max_horizontal_bars=5
+                vertical_lines=5, min_horizontal_bars=-1, max_horizontal_bars=5
             )
 
     def test_zero_horizontal_bars(self) -> None:
         """Test case when number of horizontal bars is 0"""
         result = generate_amidakuji_data(
-            vertical_lines=3,
-            min_horizontal_bars=0,
-            max_horizontal_bars=0
+            vertical_lines=3, min_horizontal_bars=0, max_horizontal_bars=0
         )
 
         assert result["vertical_lines"] == 3
@@ -101,9 +89,7 @@ class TestRenderToPdf:
         """Test PDF file generation"""
         # Generate test Amidakuji data
         amidakuji_data = generate_amidakuji_data(
-            vertical_lines=4,
-            min_horizontal_bars=2,
-            max_horizontal_bars=5
+            vertical_lines=4, min_horizontal_bars=2, max_horizontal_bars=5
         )
 
         # Use temporary file to test PDF generation
@@ -125,9 +111,7 @@ class TestRenderToPdf:
     def test_output_directory_creation(self) -> None:
         """Test case when output directory doesn't exist"""
         amidakuji_data = generate_amidakuji_data(
-            vertical_lines=3,
-            min_horizontal_bars=1,
-            max_horizontal_bars=3
+            vertical_lines=3, min_horizontal_bars=1, max_horizontal_bars=3
         )
 
         with tempfile.TemporaryDirectory() as temp_dir:

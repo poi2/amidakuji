@@ -17,9 +17,7 @@ def test_basic_functionality() -> bool:
         # 1. Data generation test
         print("1. Amidakuji data generation test...")
         data = generate_amidakuji_data(
-            vertical_lines=5,
-            min_horizontal_bars=3,
-            max_horizontal_bars=10
+            vertical_lines=5, min_horizontal_bars=3, max_horizontal_bars=10
         )
         print(f"   ✓ Vertical lines: {data['vertical_lines']}")
         print(f"   ✓ Horizontal bars: {data['horizontal_bars_total']}")

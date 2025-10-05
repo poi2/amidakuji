@@ -14,36 +14,34 @@ from amidakuji_generator.core import generate_amidakuji_data, render_to_pdf
 
 def main() -> None:
     """Main function: Parse command line arguments and generate Amidakuji"""
-    parser = argparse.ArgumentParser(
-        description="Generate Amidakuji and output as PDF"
-    )
+    parser = argparse.ArgumentParser(description="Generate Amidakuji and output as PDF")
 
     parser.add_argument(
-        "--lines", "-l",
+        "--lines",
+        "-l",
         type=int,
         required=True,
-        help="Number of vertical lines (integer >= 2)"
+        help="Number of vertical lines (integer >= 2)",
     )
 
     parser.add_argument(
-        "--min-bars", "--min",
+        "--min-bars",
+        "--min",
         type=int,
         required=True,
-        help="Minimum number of horizontal bars (integer >= 0)"
+        help="Minimum number of horizontal bars (integer >= 0)",
     )
 
     parser.add_argument(
-        "--max-bars", "--max",
+        "--max-bars",
+        "--max",
         type=int,
         required=True,
-        help="Maximum number of horizontal bars (integer >= 0)"
+        help="Maximum number of horizontal bars (integer >= 0)",
     )
 
     parser.add_argument(
-        "--output", "-o",
-        type=str,
-        required=True,
-        help="Path to output PDF file"
+        "--output", "-o", type=str, required=True, help="Path to output PDF file"
     )
 
     args = parser.parse_args()
@@ -61,7 +59,7 @@ def main() -> None:
         amidakuji_data = generate_amidakuji_data(
             vertical_lines=args.lines,
             min_horizontal_bars=args.min_bars,
-            max_horizontal_bars=args.max_bars
+            max_horizontal_bars=args.max_bars,
         )
 
         # Render to PDF
