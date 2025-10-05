@@ -24,6 +24,11 @@ jobs:
           # Enable cache
           enable-cache: true
 
+      - name: Check lock file consistency
+        run: |
+          # Check if uv.lock is consistent with pyproject.toml
+          python scripts/check_lockfile.py
+
       - name: Create virtual environment
         run: uv venv
 
