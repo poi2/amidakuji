@@ -32,22 +32,71 @@ def main() -> None:
         print("💡 Run 'uv lock' to generate it")
         sys.exit(1)
 
-    # Run uv lock --check
-    exit_code, stdout, stderr = run_command(["uv", "lock", "--check"], cwd=project_root)
+    # Check if --check flag is supported by running uv lock --help
+    help_code, help_stdout, help_stderr = run_command(
+        ["uv", "lock", "--help"], cwd=project_root
+    )
 
-    if exit_code == 0:
-        print("✅ uv.lock is consistent with pyproject.toml")
+    if help_code == 0 and "--check" in help_stdout:
+        # Use --check if available (newer uv versions)
+        print("🔍 Using uv lock --check...")
+        exit_code, stdout, stderr = run_command(
+            ["uv", "lock", "--check"], cwd=project_root
+        )
+
+        if exit_code == 0:
+            print("✅ uv.lock is consistent with pyproject.toml")
+        else:
+            print("❌ uv.lock is outdated or inconsistent!")
+            print("\n📋 uv output:")
+            if stdout:
+                print(stdout)
+            if stderr:
+                print(stderr)
+            print("\n💡 To fix this issue:")
+            print("   1. Run 'uv lock' to update uv.lock")
+            print("   2. Commit the updated uv.lock file")
+            sys.exit(1)
     else:
-        print("❌ uv.lock is outdated or inconsistent!")
-        print("\n📋 uv output:")
-        if stdout:
-            print(stdout)
-        if stderr:
-            print(stderr)
-        print("\n💡 To fix this issue:")
-        print("   1. Run 'uv lock' to update uv.lock")
-        print("   2. Commit the updated uv.lock file")
-        sys.exit(1)
+        # Fallback method for older uv versions
+        print("🔄 Using fallback method (older uv version)...")
+
+        # Create a backup of current lock file
+        import shutil
+
+        backup_path = lock_file.with_suffix(".lock.backup")
+        shutil.copy2(lock_file, backup_path)
+
+        try:
+            # Generate new lock file
+            exit_code, stdout, stderr = run_command(["uv", "lock"], cwd=project_root)
+
+            if exit_code != 0:
+                print("❌ Failed to regenerate lock file!")
+                if stderr:
+                    print(stderr)
+                sys.exit(1)
+
+            # Compare old and new lock files
+            with open(lock_file, "r") as f:
+                new_content = f.read()
+            with open(backup_path, "r") as f:
+                old_content = f.read()
+
+            if new_content == old_content:
+                print("✅ uv.lock is consistent with pyproject.toml")
+            else:
+                print("❌ uv.lock is outdated or inconsistent!")
+                print("\n💡 To fix this issue:")
+                print("   1. Run 'uv lock' to update uv.lock")
+                print("   2. Commit the updated uv.lock file")
+                # Restore original lock file
+                shutil.move(backup_path, lock_file)
+                sys.exit(1)
+        finally:
+            # Clean up backup file if it exists
+            if backup_path.exists():
+                backup_path.unlink()
 
 
 if __name__ == "__main__":
