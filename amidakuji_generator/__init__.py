@@ -1,0 +1,1 @@
+# Amidakuji Generator Tool

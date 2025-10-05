@@ -1,0 +1,45 @@
+name: Python Quality Checks
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  quality-checks:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.11", "3.12"]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup uv
+        uses: astral-sh/setup-uv@v1
+        with:
+          python-version: ${{ matrix.python-version }}
+          # Enable cache
+          enable-cache: true
+
+      - name: Check lock file consistency
+        run: |
+          # Check if uv.lock is consistent with pyproject.toml
+          python scripts/check_lockfile.py
+
+      - name: Install dependencies from lockfile
+        run: uv sync --all-extras
+
+      - name: Run linter
+        run: uv run ruff check .
+
+      - name: Check formatting
+        run: uv run ruff format --check .
+
+      - name: Run tests
+        run: uv run pytest tests/ -v
+
+      - name: Run functionality verification
+        run: uv run python verify.py

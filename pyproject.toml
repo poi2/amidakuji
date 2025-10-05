@@ -1,0 +1,58 @@
+[project]
+name = "amidakuji-generator"
+version = "0.1.0"
+description = "A tool to generate Amidakuji."
+authors = []
+dependencies = [
+    "reportlab",
+]
+requires-python = ">=3.12"
+readme = "README.md"
+license = {text = "MIT"}
+
+[project.optional-dependencies]
+dev = [
+    "ruff",
+    "pytest",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.ruff]
+# Blackのデフォルトと一致させる
+line-length = 88
+# 対象とするPythonバージョンを指定
+target-version = "py312"
+
+[tool.ruff.lint]
+# 有効にするルールセットを選択
+# E/W: pycodestyle (エラー/警告)
+# F: Pyflakes (論理エラー)
+# I: isort (インポート順序)
+# B: flake8-bugbear (よくあるバグや設計上の問題)
+# ANN: flake8-annotations (型アノテーションの欠落)
+select = ["E", "W", "F", "I", "B", "ANN"]
+
+# 特定のルールを無視する
+ignore = []
+
+# ファイル/ディレクトリごとに無視するルールを指定
+# 例: テストファイルではassert文を許可する
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["S101"]
+
+[tool.ruff.lint.isort]
+# プロジェクト自身のモジュールをファーストパーティとして認識させる
+known-first-party = ["amidakuji_generator"]
+
+[tool.ruff.format]
+# Black互換のフォーマッター設定
+# 引用符のスタイルなどを指定可能
+quote-style = "double"
+
+[tool.pytest.ini_options]
+# pytestの設定
+testpaths = ["tests"]
+addopts = "-v"
