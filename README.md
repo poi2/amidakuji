@@ -1,37 +1,37 @@
-# あみだくじ生成ツール
+# Amidakuji Generator
 
-あみだくじを生成してPDFとして出力するPython製のCLIツールです。
+A Python CLI tool for generating Amidakuji (Japanese ladder lottery) and outputting as PDF.
 
-## 機能
+## Features
 
-- 指定された縦棒数と横棒数範囲に基づいてあみだくじを生成
-- 生成したあみだくじをPDFファイルとして保存
-- コマンドライン引数による簡単な操作
+- Generate Amidakuji based on specified number of vertical lines and horizontal bars range
+- Save generated Amidakuji as PDF file
+- Simple operation via command line arguments
 
-## 使い方
+## Usage
 
 ```bash
 python main.py --lines 5 --min-bars 8 --max-bars 15 --output amidakuji.pdf
 ```
 
-### オプション
+### Options
 
-- `--lines` / `-l`: 縦棒の本数（必須）
-- `--min-bars` / `--min`: 横棒の最小本数（必須）
-- `--max-bars` / `--max`: 横棒の最大本数（必須）
-- `--output` / `-o`: 出力PDFファイルのパス（必須）
+- `--lines` / `-l`: Number of vertical lines (required)
+- `--min-bars` / `--min`: Minimum number of horizontal bars (required)
+- `--max-bars` / `--max`: Maximum number of horizontal bars (required)
+- `--output` / `-o`: Output PDF file path (required)
 
-## 開発環境
+## Development Environment
 
-このプロジェクトは Dev Containers を使用して開発されています。VS Code で `.devcontainer` フォルダが検出されたら、コンテナで再度開くことで開発環境が自動的にセットアップされます。
+This project is developed using Dev Containers. When VS Code detects the `.devcontainer` folder, reopening in container will automatically set up the development environment.
 
-### 必要なツール
+### Required Tools
 
 - Docker
 - Visual Studio Code
-- Dev Containers 拡張機能
+- Dev Containers extension
 
-## ライセンス
+## License
 
 MIT
 

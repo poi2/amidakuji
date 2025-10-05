@@ -12,16 +12,16 @@ def generate_amidakuji_data(
     max_horizontal_bars: int,
 ) -> Dict[str, Any]:
     """
-    あみだくじの抽象データ構造を生成する。
+    Generate abstract data structure for Amidakuji.
 
     Args:
-        vertical_lines (int): 縦棒の本数 (n)。2以上である必要がある。
-        min_horizontal_bars (int): 横棒の最小本数 (b_min)。
-        max_horizontal_bars (int): 横棒の最大本数 (b_max)。
+        vertical_lines (int): Number of vertical lines (n). Must be 2 or greater.
+        min_horizontal_bars (int): Minimum number of horizontal bars (b_min).
+        max_horizontal_bars (int): Maximum number of horizontal bars (b_max).
 
     Returns:
-        Dict[str, Any]: あみだくじの構造を表す辞書。
-        例:
+        Dict[str, Any]: Dictionary representing Amidakuji structure.
+        Example:
         {
             "vertical_lines": 5,
             "horizontal_bars_total": 10,
@@ -31,48 +31,48 @@ def generate_amidakuji_data(
         }
 
     Raises:
-        ValueError: 入力パラメータが無効な場合
+        ValueError: When input parameters are invalid
     """
-    # 入力パラメータの検証
+    # Input parameter validation
     if vertical_lines < 2:
-        raise ValueError("縦棒の本数は2以上である必要があります")
+        raise ValueError("Number of vertical lines must be 2 or greater")
     if min_horizontal_bars < 0:
-        raise ValueError("横棒の最小本数は0以上である必要があります")
+        raise ValueError("Minimum number of horizontal bars must be 0 or greater")
     if max_horizontal_bars < 0:
-        raise ValueError("横棒の最大本数は0以上である必要があります")
+        raise ValueError("Maximum number of horizontal bars must be 0 or greater")
     if min_horizontal_bars > max_horizontal_bars:
-        raise ValueError("最小本数は最大本数以下である必要があります")
+        raise ValueError("Minimum must be less than or equal to maximum")
 
-    # 横棒の総数をランダムに決定
+    # Randomly determine total number of horizontal bars
     total_bars = random.randint(min_horizontal_bars, max_horizontal_bars)
 
-    # 配置グリッドの定義
+    # Define placement grid
     height = total_bars * 2 if total_bars > 0 else 2
     num_columns = vertical_lines - 1
 
-    # 配置候補の生成
+    # Generate placement candidates
     positions = []
     for y in range(height):
         for col in range(num_columns):
             positions.append((y, col))
 
-    # ランダムにシャッフル
+    # Randomly shuffle
     random.shuffle(positions)
 
-    # 選択済み位置を管理
+    # Manage selected positions
     selected_positions = set()
     horizontal_bars = []
 
-    # 横棒を配置
+    # Place horizontal bars
     for y, col in positions:
         if len(horizontal_bars) >= total_bars:
             break
 
-        # 隣接する位置が既に選択されていないかチェック
+        # Check if adjacent positions are not already selected
         if (y, col) not in selected_positions and \
            (y, col - 1) not in selected_positions and \
            (y, col + 1) not in selected_positions:
-            # 競合しない場合、横棒を追加
+            # If no conflict, add horizontal bar
             horizontal_bars.append({
                 "y_level": y,
                 "left_line_index": col
@@ -91,52 +91,54 @@ def render_to_pdf(
     output_path: str
 ) -> None:
     """
-    あみだくじのデータ構造をReportLabを使用してPDFファイルにレンダリングする。
+    Render Amidakuji data structure to PDF file using ReportLab.
 
     Args:
-        amidakuji_data (Dict[str, Any]): generate_amidakuji_dataから得られるデータ構造。
-        output_path (str): 生成されたPDFを保存するファイルパス。
+        amidakuji_data (Dict[str, Any]): Data structure obtained from
+            generate_amidakuji_data.
+        output_path (str): File path to save the generated PDF.
     """
-    # 出力ディレクトリが存在しない場合は作成
+    # Create output directory if it doesn't exist
     from pathlib import Path
     Path(output_path).parent.mkdir(parents=True, exist_ok=True)
-    # PDFドキュメントの初期化
+    # Initialize PDF document
     c = canvas.Canvas(output_path, pagesize=A4)
     page_width, page_height = A4
 
-    # マージンの設定（1インチ = 72ポイント）
+    # Set margins (1 inch = 72 points)
     margin = inch
     draw_width = page_width - 2 * margin
     draw_height = page_height - 2 * margin
 
-    # データの取得
+    # Get data
     n = amidakuji_data["vertical_lines"]
     horizontal_bars = amidakuji_data["horizontal_bars"]
 
-    # 最大のy_levelを取得してレイアウトを計算
+    # Get maximum y_level to calculate layout
     max_y_level = max([bar["y_level"] for bar in horizontal_bars], default=0)
     levels = max_y_level + 1
 
-    # 縦棒の間隔を計算
+    # Calculate vertical line spacing
     if n > 1:
         line_spacing = draw_width / (n - 1)
     else:
         line_spacing = 0
 
-    # レベル間の間隔を計算
+    # Calculate level spacing
     if levels > 1:
-        level_spacing = draw_height / (levels + 2)  # 上下にラベル用のスペースを確保
+        # Reserve space for labels at top and bottom
+        level_spacing = draw_height / (levels + 2)
     else:
         level_spacing = draw_height / 4
 
-    # 縦棒を描画
+    # Draw vertical lines
     for i in range(n):
         x = margin + i * line_spacing
         y_top = page_height - margin - level_spacing
         y_bottom = margin + level_spacing
         c.line(x, y_top, x, y_bottom)
 
-    # 開始ラベル（上部）を描画
+    # Draw start labels (top)
     for i in range(n):
         x = margin + i * line_spacing
         y = page_height - margin - level_spacing / 2
@@ -144,10 +146,10 @@ def render_to_pdf(
         text_width = c.stringWidth(text)
         c.drawString(x - text_width / 2, y, text)
 
-    # あみだくじの経路をシミュレーションして結果を計算
+    # Simulate Amidakuji path to calculate results
     result_mapping = _simulate_amidakuji(amidakuji_data)
 
-    # 終了ラベル（下部）を描画
+    # Draw end labels (bottom)
     for i in range(n):
         x = margin + i * line_spacing
         y = margin + level_spacing / 2
@@ -155,7 +157,7 @@ def render_to_pdf(
         text_width = c.stringWidth(result_char)
         c.drawString(x - text_width / 2, y, result_char)
 
-    # 横棒を描画
+    # Draw horizontal bars
     for bar in horizontal_bars:
         y_level = bar["y_level"]
         left_index = bar["left_line_index"]
@@ -166,37 +168,37 @@ def render_to_pdf(
 
         c.line(x1, y, x2, y)
 
-    # フッターに生成パラメータを表示
+    # Display generation parameters in footer
     footer_text = f"Generated with n={n}, bars={len(horizontal_bars)}"
     c.drawString(margin, margin / 2, footer_text)
 
-    # PDFを保存
+    # Save PDF
     c.save()
 
 
 def _simulate_amidakuji(amidakuji_data: Dict[str, Any]) -> List[int]:
     """
-    あみだくじの経路をシミュレーションして、各開始点の終着点を計算する。
+    Simulate Amidakuji path to calculate the destination of each starting point.
 
     Args:
-        amidakuji_data: あみだくじのデータ構造
+        amidakuji_data: Amidakuji data structure
 
     Returns:
-        List[int]: 各開始点に対応する終着点のインデックス
+        List[int]: Index of destination point corresponding to each starting point
     """
     n = amidakuji_data["vertical_lines"]
     horizontal_bars = amidakuji_data["horizontal_bars"]
 
-    # y_levelでソートして上から順に処理
+    # Sort by y_level and process from top to bottom
     sorted_bars = sorted(horizontal_bars, key=lambda x: x["y_level"])
 
-    # 各線の現在位置を追跡
+    # Track current position of each line
     positions = list(range(n))
 
-    # 各レベルで横棒による交換を実行
+    # Execute swaps by horizontal bars at each level
     for bar in sorted_bars:
         left_index = bar["left_line_index"]
-        # left_indexとleft_index+1の位置を交換
+        # Swap positions at left_index and left_index+1
         if left_index < len(positions) - 1:
             positions[left_index], positions[left_index + 1] = \
                 positions[left_index + 1], positions[left_index]

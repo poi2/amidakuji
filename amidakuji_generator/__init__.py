@@ -1,1 +1,1 @@
-# あみだくじ生成ツール
+# Amidakuji Generator Tool
