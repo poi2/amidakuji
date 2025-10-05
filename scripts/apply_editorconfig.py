@@ -88,7 +88,7 @@ def apply_editorconfig_to_file(file_path: Path) -> None:
         print("  ✓ No changes needed")
 
 
-def main():
+def main() -> None:
     """Main function"""
     project_root = Path(__file__).parent.parent
 
